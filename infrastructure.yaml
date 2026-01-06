@@ -1,0 +1,42 @@
+# BillTracker Infrastructure Configuration
+# This file defines the Azure resources for the BillTracker application.
+#
+# GitOps Workflow:
+# 1. Edit this file and create a PR to preview infrastructure changes
+# 2. PR will show what resources will be created/modified
+# 3. Merge to main to automatically provision the infrastructure
+#
+# Track provisioning status at: https://wonderful-field-088efae10.1.azurestaticapps.net
+
+metadata:
+  project_name: billtracker
+  environment: dev
+  business_unit: engineering
+  cost_center: CC-BILL-001
+  owner_email: billtracker-team@example.com
+  location: centralus
+  tags:
+    Application: BillTracker
+    Team: Engineering
+    ManagedBy: GitOps
+
+resources:
+  # Storage account for bill documents and attachments
+  - type: storage_account
+    name: docs
+    config:
+      tier: Standard
+      replication: LRS
+      versioning: true
+      containers:
+        - name: bills
+          access_type: private
+        - name: receipts
+          access_type: private
+
+  # Key Vault for storing secrets (API keys, connection strings)
+  - type: keyvault
+    name: secrets
+    config:
+      sku: standard
+      rbac_enabled: true
