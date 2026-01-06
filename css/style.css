@@ -1,0 +1,997 @@
+/* Cyberpunk Theme CSS */
+:root {
+    --neon-pink: #ff00ff;
+    --neon-blue: #00ffff;
+    --neon-purple: #b967ff;
+    --neon-green: #39ff14;
+    --neon-silver: #e0e0ff;
+    --dark-purple: #1a0933;
+    --dark-blue: #0b0b2b;
+    --cyber-black: #0d0221;
+    --cyber-gray: #31314d;
+    --cyber-yellow: #ffd319;
+    --cyber-red: #ff3448;
+    --cyber-orange: #ff6a00;
+    --cyber-teal: #00ffd5;
+    
+    /* New vibrant glassmorphic styles */
+    --glass-blue: rgba(0, 217, 255, 0.15);
+    --glass-purple: rgba(168, 42, 255, 0.15);
+    --glass-pink: rgba(255, 0, 128, 0.15);
+    --glass-green: rgba(57, 255, 20, 0.15);
+    --glass-teal: rgba(0, 255, 213, 0.15);
+    --glass-orange: rgba(255, 106, 0, 0.15);
+    --glass-red: rgba(255, 52, 72, 0.15);
+}
+
+body {
+    background-color: var(--cyber-black);
+    color: #ffffff;
+    font-family: 'Rajdhani', 'Orbitron', sans-serif;
+    min-height: 100vh;
+    background-image: 
+        linear-gradient(45deg, var(--dark-blue) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--dark-blue) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--dark-blue) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--dark-blue) 75%);
+    background-size: 100px 100px;
+    background-position: 0 0, 0 50px, 50px -50px, -50px 0px;
+    background-attachment: fixed;
+}
+
+/* Text color classes */
+.text-neon-pink {
+    color: var(--neon-pink);
+    text-shadow: 0 0 5px var(--neon-pink);
+}
+
+.text-neon-blue {
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.text-neon-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px var(--neon-purple);
+}
+
+.text-neon-green {
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+/* Fix for missing space in text-shadow property */
+.text-neon-green {
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+.text-neon-yellow {
+    color: var(--cyber-yellow);
+    text-shadow: 0 0 5px var(--cyber-yellow);
+}
+
+.text-neon-silver {
+    color: var(--neon-silver);
+    text-shadow: 0 0 5px var(--neon-silver);
+}
+
+/* Hide spinners (up/down buttons) from number inputs */
+/* For Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* New Cyberpunk Header Styles */
+.cyber-grid {
+    background-image: linear-gradient(90deg, rgba(11, 11, 43, 0.5) 1px, transparent 1px), 
+                      linear-gradient(0deg, rgba(11, 11, 43, 0.5) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.5;
+}
+
+.cyber-scanline {
+    /* Scanline effect removed */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+@keyframes scanline {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.drop-shadow-glow {
+    filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 10px currentColor);
+}
+
+.cyber-glitch-title {
+    position: relative;
+}
+
+.cyber-glitch-title::before,
+.cyber-glitch-title::after {
+    content: attr(data-content);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.cyber-glitch-title::before {
+    animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+    animation-delay: 0.5s;
+    color: var(--neon-pink);
+    z-index: -1;
+}
+
+.cyber-glitch-title::after {
+    animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+    animation-delay: 0.75s;
+    color: var(--neon-blue);
+    z-index: -2;
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    to {
+        transform: translate(0);
+    }
+}
+
+.blinking-cursor {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Existing styles continue below */
+.cyber-header {
+    background: linear-gradient(90deg, var(--dark-purple), var(--dark-blue));
+    border-bottom: 2px solid var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.cyber-card {
+    background-color: rgba(13, 13, 23, 0.8);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cyber-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: -1;
+    transition: all 0.4s ease;
+    /* Line patterns removed */
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cyber-card:hover {
+    box-shadow: 
+        0 0 40px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.cyber-card:hover::after {
+    opacity: 0.5;
+    background-position: right top, left bottom;
+}
+
+@keyframes circuit-animation {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 100px 0, 200px 0; }
+}
+
+/* Credit cards container - no scrollbar, grid layout */
+.credit-cards-wrapper {
+    height: auto; /* Allow auto height to fit content */
+    padding-right: 5px; /* Prevent content from touching edge */
+    margin-right: -5px; /* Offset the padding */
+    padding-top: 8px; /* Padding to the top to prevent border clipping when hovering */
+}
+
+/* Bills and loans container with auto-expanding height */
+.bills-wrapper,
+.loans-wrapper {
+    height: auto; /* Allow auto height to fit content */
+    padding-right: 5px; /* Maintain padding */
+    margin-right: -5px; /* Offset the padding */
+    padding-top: 8px; /* Padding to maintain styling */
+}
+
+/* Ensure the first card has proper spacing */
+.credit-cards-wrapper > div:first-child,
+.bills-wrapper > div:first-child {
+    margin-top: 2px;
+}
+
+/* Hide scrollbars by default for all browsers */
+.credit-cards-wrapper::-webkit-scrollbar,
+.bills-wrapper::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: transparent;
+}
+
+/* Only show scrollbar when the content is actually scrollable AND the container has a special class */
+.actually-scrollable.credit-cards-wrapper,
+.actually-scrollable.bills-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-purple) var(--dark-blue);
+    -ms-overflow-style: auto;
+}
+
+.actually-scrollable.credit-cards-wrapper::-webkit-scrollbar,
+.actually-scrollable.bills-wrapper::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+}
+
+.actually-scrollable.credit-cards-wrapper::-webkit-scrollbar-track,
+.actually-scrollable.bills-wrapper::-webkit-scrollbar-track {
+    background: var(--dark-blue);
+    border-radius: 10px;
+}
+
+.actually-scrollable.credit-cards-wrapper::-webkit-scrollbar-thumb,
+.actually-scrollable.bills-wrapper::-webkit-scrollbar-thumb {
+    background: var(--neon-purple);
+    border-radius: 10px;
+    border: 2px solid var(--dark-blue);
+}
+
+.actually-scrollable.credit-cards-wrapper::-webkit-scrollbar-thumb:hover,
+.actually-scrollable.bills-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-blue);
+    box-shadow: 0 0 8px var(--neon-blue);
+}
+
+.cyber-primary-btn {
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.cyber-primary-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    z-index: -1;
+    transition: all 0.5s ease;
+}
+
+.cyber-primary-btn:hover::before {
+    left: 100%;
+}
+
+.cyber-secondary-btn {
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+    color: white;
+}
+
+.cyber-danger-btn {
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+    color: white;
+}
+
+.cyber-input {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-blue);
+    color: white;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.cyber-input:focus {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+    outline: none;
+}
+
+.cyber-progress-bar {
+    height: 8px;
+    background-color: var(--cyber-gray);
+    overflow: hidden;
+    position: relative;
+}
+
+.cyber-progress-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-progress-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: cyber-glint 2s infinite;
+}
+
+.cyber-pink {
+    background: var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-pink);
+}
+
+.cyber-blue {
+    background: var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+.cyber-purple {
+    background: var(--neon-purple);
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.cyber-green {
+    background: var(--neon-green);
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+.cyber-yellow {
+    background: var(--cyber-yellow);
+    box-shadow: 0 0 10px var(--cyber-yellow);
+}
+
+.floating-label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: var(--dark-blue);
+    padding: 0 5px;
+    font-size: 12px;
+    color: var(--neon-blue);
+}
+
+.input-container {
+    position: relative;
+    margin-top: 15px;
+}
+
+.cyber-border {
+    border-color: var(--neon-purple);
+}
+
+.cyber-text-glow {
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.modal-cyber {
+    background: radial-gradient(var(--dark-blue), var(--cyber-black));
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 30px var(--neon-blue);
+}
+
+@keyframes cyber-glint {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .cyber-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Modal responsiveness for mobile */
+    .modal-cyber {
+        width: 90% !important;
+        max-height: 85vh;
+        overflow-y: auto;
+        margin: 0 auto;
+    }
+
+    /* Fix spacing between items in modals for better touch targets */
+    .modal-cyber .space-y-4 > div {
+        margin-bottom: 1rem;
+    }
+
+    /* Make select dropdowns more touch-friendly */
+    .modal-cyber select {
+        padding: 10px;
+    }
+
+    /* Prevent header content from overlapping on mobile */
+    .bills-section .flex.items-center.justify-between.mb-6 {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .bills-section .flex.items-center.justify-between.mb-6 > div {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .bills-section .font-orbitron.text-2xl {
+        position: static !important;
+        margin-bottom: 10px;
+        padding: 5px;
+    }
+
+    /* Improve button layout on mobile */
+    .bills-section .flex.space-x-2 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bills-section .flex.space-x-2 a {
+        margin: 5px 0;
+        text-align: center;
+    }
+}
+
+/* Help Modal Responsive Styling */
+@media (max-width: 768px) {
+    #helpModal .modal-cyber {
+        margin: 10px;
+        padding: 15px;
+        max-height: calc(100vh - 20px);
+    }
+    
+    #helpModal h3 {
+        font-size: 1.5rem;
+    }
+    
+    #helpModal h4 {
+        font-size: 1.25rem;
+    }
+    
+    #helpModal .cyber-help-content {
+        padding-bottom: 20px;
+    }
+}
+
+/* Credit and Bills cards specific styling */
+.credit-info-section,
+.bills-section {
+    min-height: 800px; /* Set minimum height for these sections */
+    display: flex;
+    flex-direction: column;
+}
+
+.bills-container {
+    flex-grow: 1;
+    min-height: 550px; /* Match the height of credit cards wrapper */
+}
+
+/* Remove scroll behavior, all sections now use grid layout to fit content */
+.credit-cards-wrapper,
+.bills-wrapper,
+.loans-wrapper {
+    overflow-y: visible;
+}
+
+/* Bill item specific styling to fix border visibility */
+.bill-item {
+    margin-top: 4px;
+    margin-bottom: 6px;
+    border-width: 1px;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bill-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+}
+
+/* Credit card logo styles */
+.card-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.card-logo:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 3px var(--neon-blue));
+}
+
+/* Paid bills styling */
+.bill-paid {
+    background-color: var(--neon-green) !important;
+    color: #000000 !important;
+    transition: all 0.3s ease;
+}
+
+.bill-paid h3, 
+.bill-paid p, 
+.bill-paid span,
+.bill-paid i {
+    color: #000000 !important;
+}
+
+/* Data Management Panel Styles */
+.bg-glass-blue {
+    background-color: rgba(0, 52, 89, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-blue::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(0, 217, 255, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-blue:hover {
+    box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+}
+
+.bg-glass-purple {
+    background-color: rgba(89, 0, 72, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 0, 136, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-purple::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(255, 0, 136, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-purple:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 136, 0.4);
+}
+
+.bg-glass-pink {
+    background-color: rgba(89, 0, 72, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-pink::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(255, 0, 255, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-pink:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+}
+
+.bg-glass-green {
+    background-color: rgba(0, 72, 36, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-green::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(57, 255, 20, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-green:hover {
+    box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
+}
+
+/* Additional cyberpunk container styles */
+.bg-glass-orange {
+    background-color: rgba(89, 44, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 106, 0, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-orange::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(255, 106, 0, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-orange:hover {
+    box-shadow: 0 0 25px rgba(255, 106, 0, 0.4);
+}
+
+.bg-glass-cyan {
+    background-color: rgba(0, 72, 89, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 183, 255, 0.2);
+    z-index: 1;
+}
+
+.bg-glass-cyan::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: rgba(0, 183, 255, 0.15);
+    z-index: -1;
+}
+
+.bg-glass-cyan:hover {
+    box-shadow: 0 0 25px rgba(0, 183, 255, 0.4);
+}
+
+/* Save confirmation animation */
+#saveConfirmation {
+    animation: fadeInOut 2s ease-in-out;
+    z-index: 9999;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    20% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Last saved time styling */
+#lastSavedTime {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+#lastSavedTime:hover {
+    color: var(--neon-silver);
+}
+
+/* Fix for modal dialogs on smaller screens */
+@media (max-width: 480px) {
+    /* Make modal content scrollable on very small screens */
+    .modal-cyber {
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    /* Ensure modal buttons don't overflow */
+    .modal-cyber .flex.justify-end.space-x-3 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-cyber .flex.justify-end.space-x-3 button {
+        margin: 5px 0;
+        margin-left: 0 !important;
+    }
+
+    /* Make card image selection grid more mobile-friendly */
+    #cardImageOptions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Fix for collapsible sections */
+#creditRatingLegendHeader,
+#taxBracketHeader {
+    cursor: pointer;
+}
+
+#creditRatingLegendHeader i,
+#taxBracketHeader i {
+    transition: transform 0.3s ease;
+}
+
+#creditRatingLegendHeader.active i,
+#taxBracketHeader.active i {
+    transform: rotate(180deg);
+}
+
+/* Ensure collapsible content is properly hidden/shown */
+#creditRatingLegendContent.hidden,
+#taxBracketContent.hidden {
+    display: none;
+}
+
+#creditRatingLegendContent,
+#taxBracketContent {
+    display: block;
+}
+
+/* Floating Back to Top Button */
+.back-to-top {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--neon-blue);
+    color: var(--cyber-black);
+    border: 2px solid var(--cyber-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+.back-to-top:hover {
+    background: var(--neon-green);
+    opacity: 1;
+    box-shadow: 0 0 15px var(--neon-green);
+    transform: translateY(-5px);
+}
+
+/* Cyberpunk grid effect removed */
+.bg-glass-blue, .bg-glass-purple, .bg-glass-pink, .bg-glass-green, .bg-glass-orange, .bg-glass-cyan {
+    /* Grid background removed */
+}
+
+/* Scanline effect removed */
+.bg-glass-blue::after, 
+.bg-glass-purple::after, 
+.bg-glass-pink::after, 
+.bg-glass-green::after, 
+.bg-glass-orange::after, 
+.bg-glass-cyan::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Add noise texture overlay */
+.bg-glass-blue, 
+.bg-glass-purple, 
+.bg-glass-pink, 
+.bg-glass-green, 
+.bg-glass-orange, 
+.bg-glass-cyan {
+    position: relative;
+}
+
+.bg-glass-blue::before {
+    box-shadow: inset 0 0 30px rgba(0, 217, 255, 0.3);
+}
+
+.bg-glass-purple::before {
+    box-shadow: inset 0 0 30px rgba(255, 0, 136, 0.3);
+}
+
+/* Inner shadow effects removed */
+
+/* Corner elements removed */
+
+/* Corner elements removed */
+
+/* Add text highlight effects */
+.bg-glass-blue:hover h4, 
+.bg-glass-blue:hover .text-2xl, 
+.bg-glass-purple:hover h4, 
+.bg-glass-purple:hover .text-2xl {
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.5), 0 0 11px rgba(255, 255, 255, 0.5);
+    transition: text-shadow 0.3s ease;
+}
+
+/* Simplified cyber-card without grid pattern */
+.cyber-card {
+    background-color: rgba(13, 2, 33, 0.7);
+}
+
+/* Section header icons */
+.cyber-card h2 i {
+    opacity: 1;
+}
+
+/* Import Options Modal styling */
+#importOptionsModal .bg-glass-blue {
+    background-color: var(--glass-blue);
+    border: 1px solid var(--neon-blue);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#importOptionsModal .bg-glass-blue:hover {
+    box-shadow: 0 0 15px var(--neon-blue);
+    background-color: rgba(0, 217, 255, 0.25);
+}
+
+#loadingModal .modal-cyber {
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 15px var(--neon-blue);
+    }
+    100% {
+        box-shadow: 0 0 30px var(--neon-purple);
+    }
+}
+
+/* Amortization Chart Styles */
+.amortization-chart-container {
+    margin-top: 1rem;
+    border-top: 1px solid rgba(100, 100, 150, 0.3);
+    padding-top: 1rem;
+}
+
+.cyber-chart-container {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    overflow: hidden;
+}
+
+.cyber-chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 90%, rgba(0, 255, 255, 0.1) 100%);
+    pointer-events: none;
+}
+
+.cyber-chart-container svg polyline {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: all 0.3s ease;
+}
+
+.cyber-chart-container svg polyline:nth-child(1) {
+    stroke: var(--neon-pink);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 3px var(--neon-pink));
+}
+
+.cyber-chart-container svg polyline:nth-child(2) {
+    stroke: var(--neon-green);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 3px var(--neon-green));
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.chart-legend .inline-block {
+    border-radius: 2px;
+    box-shadow: 0 0 3px currentColor;
+}

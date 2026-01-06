@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corpo Cache</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- Tailwind and Font Awesome CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts for Cyberpunk theme -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-pink': '#ff00ff',
+                        'neon-blue': '#00ffff',
+                        'neon-purple': '#b967ff',
+                        'neon-green': '#39ff14',
+                        'neon-silver': '#e0e0ff',
+                        'dark-purple': '#1a0933',
+                        'dark-blue': '#0b0b2b',
+                        'cyber-black': '#0d0221',
+                        'cyber-gray': '#31314d',
+                        'cyber-yellow': '#ffd319',
+                        'orange-500': '#f97316'
+                    }
+                }
+            }
+        }
+    </script>    <!-- External CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cyberpunk-bg.css">
+    <link rel="stylesheet" href="css/circuit-lines.css">
+    <link rel="stylesheet" href="css/amortization-chart.css">
+    <style>
+        .blinking-cursor {
+            display: inline-block;
+            font-weight: 100;
+            font-size: 1.2em;
+            color: #00ffff; /* Changed to neon blue hex color */
+        }
+    </style>
+</head>
+<body class="min-h-screen">    <!-- Cyberpunk Animated Background -->
+    <div class="cyberpunk-bg">
+        <div class="grid-overlay"></div>
+        <div class="circuit-container">
+            <div class="circuit-line h-line1"></div>
+            <div class="circuit-line h-line2"></div>
+            <div class="circuit-line h-line3"></div>
+            <div class="circuit-line v-line1"></div>
+            <div class="circuit-line v-line2"></div>
+            <div class="circuit-line v-line3"></div>
+            <!-- Added more circuit lines for a richer effect -->
+            <div class="circuit-line h-line4"></div>
+            <div class="circuit-line h-line5"></div>
+            <div class="circuit-line v-line4"></div>
+            <div class="circuit-line v-line5"></div>
+        </div>
+        <div class="glow-overlay"></div>
+        <div class="scan-line"></div>
+    </div>
+    
+    <!-- Cyberpunk styled header with no visible background -->
+    <header class="relative">
+        <div class="container mx-auto px-4 py-8 relative z-20">
+            <h1 class="cyber-glitch-title text-center">
+                <span class="text-6xl lg:text-7xl font-bold font-orbitron tracking-wider relative">
+                    <span class="relative inline-block">
+                        <span class="text-neon-pink drop-shadow-glow">CORPO</span>
+                        <span class="text-neon-green drop-shadow-glow">CACHE</span><span class="blinking-cursor drop-shadow-glow">_</span>
+                    </span>
+                </span>
+            </h1>            <div class="cyber-subtitle text-center mt-2 text-sm text-gray-400 uppercase tracking-widest">
+                <span class="px-4 py-1 rounded-sm inline-block">
+                    SYSTEM v0.1.0 <span class="text-neon-green">// ONLINE</span>
+                </span>
+            </div>
+              <!-- Data Management Panel -->
+            <div class="flex justify-center mt-4">                <div class="bg-glass-blue p-2 rounded-lg flex space-x-2 items-center">
+                    <button onclick="saveToLocalStorage()" class="px-3 py-1 bg-glass-blue hover:bg-opacity-90 rounded-md transition text-sm">
+                        <i class="fas fa-save mr-1"></i> Save
+                    </button>
+                    <button onclick="exportData()" class="px-3 py-1 bg-glass-blue hover:bg-opacity-90 rounded-md transition text-sm">
+                        <i class="fas fa-file-export mr-1"></i> Export
+                    </button>
+                    <button onclick="importData()" class="px-3 py-1 bg-glass-blue hover:bg-opacity-90 rounded-md transition text-sm">
+                        <i class="fas fa-file-import mr-1"></i> Import
+                    </button>
+                    <button onclick="clearAllData()" class="px-3 py-1 bg-glass-blue hover:bg-opacity-90 rounded-md transition text-sm">
+                        <i class="fas fa-trash mr-1"></i> Reset
+                    </button>
+                    <button onclick="openHelpModal()" class="px-3 py-1 bg-glass-blue hover:bg-opacity-90 rounded-md transition text-sm">
+                        <i class="fas fa-question-circle mr-1"></i> Help
+                    </button>
+                    <span id="lastSavedTime" class="text-xs text-gray-400 hidden ml-2"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Bills Section - Now placed above credit and loan sections -->
+            <div class="cyber-card rounded-lg p-6 bills-section lg:col-span-2">
+                <div class="flex items-center justify-between mb-6 relative">
+                    <h2 class="text-xl font-semibold text-white">
+                        <i class="fas fa-file-invoice-dollar mr-2 text-neon-green"></i> Monthly Bills
+                    </h2>
+                    
+                    <div class="font-orbitron text-2xl tracking-wider font-bold text-center pointer-events-none mt-4 md:mt-0 md:absolute md:left-0 md:right-0">
+                        <span id="currentMonth" class="text-neon-blue">MAY</span>
+                        <span id="currentYear" class="text-neon-pink">2025</span>
+                    </div>
+                      <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0">
+                        <a href="#" onclick="showAddBillModal()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                            <i class="fas fa-plus mr-1"></i> Add Bill
+                        </a>
+                        <a href="#" onclick="completeMonthConfirm()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                            <i class="fas fa-check-circle mr-1"></i> Complete Month
+                        </a>
+                    </div>
+                </div>                <div class="bills-wrapper" style="min-height: 400px;">
+                    <div id="billsContainer" class="bills-container grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Bills will be added here -->
+                        <p class="text-gray-400 text-center py-4 md:col-span-2">No bills added yet</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium text-white">Monthly Bills</h3>
+                        <span class="text-sm text-neon-blue"><span id="totalBills">0</span> Monthly Bills</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-glass-blue p-4 rounded-lg flex flex-col">
+                            <p class="text-sm text-gray-300">Paycheck 1 (15th)</p>
+                            <div class="flex-grow" style="min-height: 80px;">
+                                <p id="paycheck1Bills" class="text-lg font-medium text-white">No bills scheduled</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="text-white">Total:</span>
+                                <span id="paycheck1Total" class="text-xl font-bold text-neon-green">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2 border-t border-gray-700 pt-2">
+                                <span class="text-white">Remaining:</span>
+                                <span id="paycheck1Remaining" class="text-xl font-bold text-neon-blue">$0</span>
+                            </div>
+                        </div>
+                        <div class="bg-glass-purple p-4 rounded-lg flex flex-col">
+                            <p class="text-sm text-gray-300">Paycheck 2 (End of Month)</p>
+                            <div class="flex-grow" style="min-height: 80px;">
+                                <p id="paycheck2Bills" class="text-lg font-medium text-white">No bills scheduled</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="text-white">Total:</span>
+                                <span id="paycheck2Total" class="text-xl font-bold text-neon-pink">$0</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2 border-t border-gray-700 pt-2">
+                                <span class="text-white">Remaining:</span>
+                                <span id="paycheck2Remaining" class="text-xl font-bold text-neon-blue">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                      <div class="bg-glass-blue p-4 rounded-lg mt-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-white font-semibold">Total Remaining Bills:</span>
+                            <span id="totalRemaining" class="text-xl font-bold text-neon-green">$0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Bill Trends Chart Section -->
+                    <div class="mt-6">
+                        <div class="flex justify-between items-center mb-3 cursor-pointer" id="billTrendsHeader">
+                            <h3 class="text-lg font-medium text-white">
+                                <i class="fas fa-chart-line mr-2 text-neon-blue"></i> Bill Amount Trends
+                            </h3>
+                            <i class="fas fa-chevron-down text-neon-blue transition-transform duration-200"></i>
+                        </div>                        <div id="billTrendsContent" class="hidden">
+                            <div id="billTrendsContainer" class="bg-glass-purple p-4 rounded-lg">
+                                <div id="bill-trends-charts">
+                                    <p class="text-center text-gray-400 py-4">Complete at least one month to see bill trends</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            <!-- Credit Card Section - Now after bills section -->
+            <div class="cyber-card rounded-lg p-6 credit-info-section lg:col-span-2">                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white">
+                        <i class="fas fa-credit-card mr-2 text-neon-blue"></i> Credit Cards
+                    </h2>
+                    <a href="#" onclick="addCreditCard()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                        <i class="fas fa-plus mr-1"></i> Add Card
+                    </a>
+                </div>
+                
+                <div class="credit-cards-wrapper">
+                    <div id="creditCardsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <!-- Credit cards will be added here -->
+                    </div>
+                </div>
+                  <div class="mt-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium text-white">Credit Cards Summary</h3>
+                        <span class="text-sm text-neon-blue"><span id="totalAccounts">0</span> Active Accounts</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Credit Limit</p>
+                            <p id="totalLimit" class="text-2xl font-bold text-white">$0</p>
+                        </div>
+                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Balance</p>
+                            <p id="totalBalance" class="text-2xl font-bold text-white">$0</p>
+                        </div>
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Utilization</p>
+                            <p id="totalUtilization" class="text-2xl font-bold text-white">0%</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Pay to 30% Utilization</p>
+                            <p id="payTo30" class="text-xl font-bold"><span class="text-neon-green">$0</span></p>
+                        </div>
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Pay to 10% Utilization</p>
+                            <p id="payTo10" class="text-xl font-bold"><span class="text-neon-blue">$0</span></p>
+                        </div>
+                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Age of Oldest Credit Line</p>
+                            <p id="oldestCreditLine" class="text-xl font-bold"><span class="text-neon-pink">0</span> months</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Color Legend -->
+                <div class="mt-6">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer" id="creditRatingLegendHeader">
+                        <h3 class="text-lg font-medium text-white">Credit Rating Legend</h3>
+                        <i class="fas fa-chevron-down text-neon-blue transition-transform"></i>
+                    </div>
+                    <div id="creditRatingLegendContent" class="w-full rounded-lg overflow-hidden hidden">
+                        <!-- Rating Labels (Top) -->
+                        <div class="flex w-full text-center mb-1">
+                            <div class="flex-1"><span class="text-neon-purple font-bold">Below Average</span></div>
+                            <div class="flex-1"><span class="text-neon-yellow font-bold">Average</span></div>
+                            <div class="flex-1"><span class="text-neon-blue font-bold">Good</span></div>
+                            <div class="flex-1"><span class="text-neon-green font-bold">Excellent</span></div>
+                        </div>
+                        
+                        <!-- Color Bar -->
+                        <div class="flex w-full h-6 rounded-md overflow-hidden">
+                            <div class="flex-1 bg-neon-purple"></div>
+                            <div class="flex-1 bg-cyber-yellow"></div>
+                            <div class="flex-1 bg-neon-blue"></div>
+                            <div class="flex-1 bg-neon-green"></div>
+                        </div>
+                        
+                        <!-- Credit Age -->
+                        <div class="flex w-full text-center mt-3 mb-1">
+                            <div class="flex-1"><span class="text-white text-sm">Age of Oldest Account</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Age of Oldest Account</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Age of Oldest Account</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Age of Oldest Account</span></div>
+                        </div>
+                        <div class="flex w-full text-center mb-3">
+                            <div class="flex-1"><span class="text-neon-purple text-sm">0-2 years</span></div>
+                            <div class="flex-1"><span class="text-neon-yellow text-sm">3-7 years</span></div>
+                            <div class="flex-1"><span class="text-neon-blue text-sm">8-24 years</span></div>
+                            <div class="flex-1"><span class="text-neon-green text-sm">25+ years</span></div>
+                        </div>
+                        
+                        <!-- Credit Utilization -->
+                        <div class="flex w-full text-center mb-1">
+                            <div class="flex-1"><span class="text-white text-sm">Credit Utilization</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Credit Utilization</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Credit Utilization</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Credit Utilization</span></div>
+                        </div>
+                        <div class="flex w-full text-center mb-3">
+                            <div class="flex-1"><span class="text-neon-purple text-sm">&gt; 61%</span></div>
+                            <div class="flex-1"><span class="text-neon-yellow text-sm">30-61%</span></div>
+                            <div class="flex-1"><span class="text-neon-blue text-sm">10-30%</span></div>
+                            <div class="flex-1"><span class="text-neon-green text-sm">&lt; 10%</span></div>
+                        </div>
+                        
+                        <!-- Available Credit -->
+                        <div class="flex w-full text-center mb-1">
+                            <div class="flex-1"><span class="text-white text-sm">Available Credit</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Available Credit</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Available Credit</span></div>
+                            <div class="flex-1"><span class="text-white text-sm">Available Credit</span></div>
+                        </div>
+                        <div class="flex w-full text-center mb-3">
+                            <div class="flex-1"><span class="text-neon-purple text-sm">&lt; $2,500</span></div>
+                            <div class="flex-1"><span class="text-neon-yellow text-sm">$2,500-$15,000</span></div>
+                            <div class="flex-1"><span class="text-neon-blue text-sm">$15,000-$50,000</span></div>
+                            <div class="flex-1"><span class="text-neon-green text-sm">&gt; $50,000</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>            <!-- Loan Information Section -->
+            <div class="cyber-card rounded-lg p-6 loan-info-section lg:col-span-2">                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white">
+                        <i class="fas fa-money-bill-wave mr-2 text-neon-purple"></i> Loans
+                    </h2>                    <a href="#" onclick="addLoan()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                        <i class="fas fa-plus mr-1"></i> Add Loan
+                    </a>
+                </div>
+                  <div class="loans-wrapper">
+                    <div id="loansContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <!-- Loans will be added here -->
+                        <p class="text-gray-400 text-center py-4 md:col-span-3 lg:col-span-4">No loans added yet</p>
+                    </div>
+                </div>
+                  <div class="mt-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium text-white">Loans Summary</h3>
+                        <span class="text-sm text-neon-blue"><span id="totalLoans">0</span> Active Loans</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Original Amount</p>
+                            <p id="totalOriginalAmount" class="text-2xl font-bold text-neon-pink">$0</p>
+                        </div>
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Current Balance</p>
+                            <p id="totalLoanBalance" class="text-2xl font-bold text-white">$0</p>
+                        </div>
+                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">Total Monthly Payment</p>
+                            <p id="totalMonthlyPayment" class="text-2xl font-bold text-white">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="flex justify-between mb-1">
+                            <p class="text-sm text-gray-400">Overall Payoff Progress</p>
+                            <span id="loanPayoffPercent" class="text-sm">0%</span>
+                        </div>
+                        <div class="cyber-progress-bar">
+                            <div id="loanPayoffProgress" class="cyber-progress-fill cyber-pink" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salary Calculator - Now moved next to Net Profit Calculator -->
+            <div class="cyber-card rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white">
+                        <i class="fas fa-money-bill-wave mr-2 text-cyber-yellow"></i> Salary Calculator
+                    </h2>
+                    <button onclick="showSalaryModal()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                        <i class="fas fa-calculator mr-1"></i> Calculate Salary
+                    </button>
+                </div>
+                
+                <div id="salaryResults" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-bold text-white">Annual Salary:</span>
+                        <span id="annualSalary" class="text-xl font-bold text-neon-green">$0</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-bold text-white">Potential Annual Bonus:</span>
+                        <span id="bonusAmount" class="text-xl font-bold text-orange-500">$0</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-bold text-white">After-Tax Bonus <span id="bonusTaxRate" class="text-sm text-neon-pink">(25% tax)</span>:</span>
+                        <span id="afterTaxBonusAmount" class="text-xl font-bold text-neon-green">$0</span>
+                    </div>
+                    
+                    <h3 class="text-lg font-medium text-white mb-3">Salary Breakdown</h3>
+                    <div class="space-y-3 text-white">
+                        <div class="flex justify-between">
+                            <span>Gross Pay:</span>
+                            <span id="grossPay" class="font-medium">$0</span>
+                        </div>
+                        
+                        <!-- Tax Breakdown Section -->
+                        <div class="border-t border-gray-700 pt-2">
+                            <div class="flex justify-between text-sm text-neon-purple font-semibold">
+                                <span>Tax Breakdown:</span>
+                                <span id="taxAmount" class="font-medium">$0</span>
+                            </div>
+                            <div class="ml-4 space-y-1 mt-1">
+                                <div class="flex justify-between text-sm">
+                                    <span>Federal Tax <span id="federalTaxRate" class="text-neon-purple">(0%)</span>:</span>
+                                    <span id="federalTaxAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Social Security <span id="oasdiRate" class="text-neon-purple">(6.2%)</span>:</span>
+                                    <span id="oasdiTaxAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Medicare <span id="medicareRate" class="text-neon-purple">(1.45%)</span>:</span>
+                                    <span id="medicareTaxAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>State Tax <span id="stateRate" class="text-neon-purple">(5%)</span>:</span>
+                                    <span id="stateTaxAmount" class="font-medium">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Savings Contributions Section -->
+                        <div class="border-t border-gray-700 pt-2">
+                            <div class="flex justify-between text-sm text-neon-green font-semibold">
+                                <span>Savings Contributions:</span>
+                                <span id="savingsTotal" class="font-medium">$0</span>
+                            </div>
+                            <div class="ml-4 space-y-1 mt-1">
+                                <div class="flex justify-between">
+                                    <span>401k Contribution:</span>
+                                    <span id="retirementAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>ESPP Contribution:</span>
+                                    <span id="esppAmount" class="font-medium">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Insurance Costs Section -->
+                        <div class="border-t border-gray-700 pt-2">
+                            <div class="flex justify-between text-sm text-neon-blue font-semibold">
+                                <span>Insurance Costs:</span>
+                                <span id="insuranceTotal" class="font-medium">$0</span>
+                            </div>
+                            <div class="ml-4 space-y-1 mt-1">
+                                <div class="flex justify-between text-sm">
+                                    <span>Health Insurance:</span>
+                                    <span id="healthAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Dental Insurance:</span>
+                                    <span id="dentalAmount" class="font-medium">$0</span>
+                                </div>                                <div class="flex justify-between text-sm">
+                                    <span>Vision Insurance:</span>
+                                    <span id="visionAmount" class="font-medium">$0</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>FSA Contribution:</span>
+                                    <span id="fsaAmount" class="font-medium">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between border-t border-gray-700 pt-2 mt-2">
+                            <span class="font-semibold">Net Pay:</span>
+                            <span id="netPay" class="font-bold text-lg text-neon-green">$0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tax Bracket Legend -->
+                <div class="mt-6 border-t border-gray-700 pt-4">
+                    <div class="flex justify-between items-center mb-3 cursor-pointer" id="taxBracketHeader">
+                        <h4 class="text-lg font-medium text-white">
+                            <i class="fas fa-table mr-2 text-neon-blue"></i> 2025 Federal Tax Brackets
+                        </h4>
+                        <i class="fas fa-chevron-down text-neon-blue transition-transform"></i>
+                    </div>
+                    
+                    <div id="taxBracketContent" class="hidden">
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-gray-300 uppercase">
+                                        <tr>
+                                            <th scope="col" class="px-3 py-2">Tax Rate</th>
+                                            <th scope="col" class="px-3 py-2">Single</th>
+                                            <th scope="col" class="px-3 py-2">Married Filing Jointly</th>
+                                            <th scope="col" class="px-3 py-2">Head of Household</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-green">10%</span></td>
+                                            <td class="px-3 py-2">$0 - $11,600</td>
+                                            <td class="px-3 py-2">$0 - $23,200</td>
+                                            <td class="px-3 py-2">$0 - $16,550</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-green">12%</span></td>
+                                            <td class="px-3 py-2">$11,600 - $47,150</td>
+                                            <td class="px-3 py-2">$23,200 - $94,300</td>
+                                            <td class="px-3 py-2">$16,550 - $63,100</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-blue">22%</span></td>
+                                            <td class="px-3 py-2">$47,150 - $100,525</td>
+                                            <td class="px-3 py-2">$94,300 - $201,050</td>
+                                            <td class="px-3 py-2">$63,100 - $100,500</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-blue">24%</span></td>
+                                            <td class="px-3 py-2">$100,525 - $191,950</td>
+                                            <td class="px-3 py-2">$201,050 - $383,900</td>
+                                            <td class="px-3 py-2">$100,500 - $191,950</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-yellow">32%</span></td>
+                                            <td class="px-3 py-2">$191,950 - $243,725</td>
+                                            <td class="px-3 py-2">$383,900 - $487,450</td>
+                                            <td class="px-3 py-2">$191,950 - $243,700</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-700">
+                                            <td class="px-3 py-2"><span class="text-neon-yellow">35%</span></td>
+                                            <td class="px-3 py-2">$243,725 - $609,350</td>
+                                            <td class="px-3 py-2">$487,450 - $731,200</td>
+                                            <td class="px-3 py-2">$243,700 - $609,350</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2"><span class="text-neon-pink">37%</span></td>
+                                            <td class="px-3 py-2">$609,350+</td>
+                                            <td class="px-3 py-2">$731,200+</td>
+                                            <td class="px-3 py-2">$609,350+</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <p class="text-sm text-gray-400 mt-3">
+                            <i class="fas fa-info-circle mr-1 text-neon-blue"></i>
+                            The calculator uses these progressive tax brackets to determine your federal tax amount.
+                            Your effective tax rate is automatically calculated based on your income.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Net Profit Calculator -->
+            <div class="cyber-card rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-white">
+                        <i class="fas fa-chart-line mr-2 text-neon-blue"></i> Net Profit Calculator
+                    </h2>
+                    <button type="button" onclick="updateGrossProfit()" class="text-white px-4 py-2 bg-glass-blue hover:bg-opacity-90 rounded-md transition">
+                        <i class="fas fa-sync-alt mr-1"></i> Update Profit
+                    </button>
+                </div>
+                
+                <div id="grossProfitContainer">
+                    <p class="text-center text-gray-400 py-4">Complete the Salary Calculator to see your profit analysis</p>
+                </div>
+                
+                <div id="grossProfitResults" class="mt-6 hidden">
+                    <h3 class="text-lg font-medium text-white mb-3">Monthly Cash Flow</h3>
+                    <div class="space-y-3 text-white">
+                        <div class="flex justify-between">
+                            <span>Monthly Net Income:</span>
+                            <span id="gpMonthlyIncome" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Total Monthly Bills:</span>
+                            <span id="gpMonthlyBills" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
+                            <span class="font-semibold">Monthly Surplus/Deficit:</span>
+                            <span id="gpMonthlySurplus" class="font-bold text-neon-blue">$0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-glass-blue p-4 rounded-lg">
+                            <h4 class="text-md font-medium text-white mb-2">Paycheck 1 (15th)</h4>
+                            <div class="flex justify-between mb-2">
+                                <span>Net Pay:</span>
+                                <span id="gpPaycheck1Net" class="font-medium">$0</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span>Bills:</span>
+                                <span id="gpPaycheck1Bills" class="font-medium">$0</span>
+                            </div>
+                            <div class="flex justify-between border-t border-gray-700 pt-2">
+                                <span class="font-semibold">Surplus/Deficit:</span>
+                                <span id="gpPaycheck1Surplus" class="font-bold">$0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-glass-purple p-4 rounded-lg">
+                            <h4 class="text-md font-medium text-white mb-2">Paycheck 2 (End of Month)</h4>
+                            <div class="flex justify-between mb-2">
+                                <span>Net Pay:</span>
+                                <span id="gpPaycheck2Net" class="font-medium">$0</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span>Bills:</span>
+                                <span id="gpPaycheck2Bills" class="font-medium">$0</span>
+                            </div>
+                            <div class="flex justify-between border-t border-gray-700 pt-2">
+                                <span class="font-semibold">Surplus/Deficit:</span>
+                                <span id="gpPaycheck2Surplus" class="font-bold">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Third Bi-Weekly Paycheck Section for Profit Calculator - Initially hidden -->
+                    <div id="gpThirdPaycheckSection" class="mt-4 bg-glass-blue p-4 rounded-lg hidden">
+                        <h4 class="text-md font-medium text-white mb-2">Extra Bi-Weekly Paycheck</h4>
+                        <div class="flex justify-between mb-2">
+                            <span>Net Pay:</span>
+                            <span id="gpPaycheck3Net" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span>Bills:</span>
+                            <span id="gpPaycheck3Bills" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-700 pt-2">
+                            <span class="font-semibold">Surplus/Deficit:</span>
+                            <span id="gpPaycheck3Surplus" class="font-bold">$0</span>
+                        </div>
+                    </div>                    
+                    <div class="mt-6">
+                        <h4 class="text-md font-medium text-white mb-2">Monthly Profit Status</h4>
+                        <div class="cyber-progress-bar">
+                            <div id="profitProgress" class="cyber-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <p id="profitStatus" class="text-sm text-gray-400 mt-1">Calculating your profit ratio...</p>
+                    </div>
+                    
+                    <h3 class="text-lg font-medium text-white mt-6 mb-3">Annual Projection</h3>
+                    <div class="space-y-3 text-white">
+                        <div class="flex justify-between">
+                            <span>Annual Net Income:</span>
+                            <span id="gpAnnualIncome" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Potential After-Tax Annual Bonus (<span id="gpAnnualBonusTaxRate" class="text-neon-purple">25%</span>):</span>
+                            <span id="gpAnnualBonus" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Annual Bills:</span>
+                            <span id="gpAnnualBills" class="font-medium">$0</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
+                            <span class="font-semibold">Annual Surplus/Deficit (without bonus):</span>
+                            <span id="gpAnnualSurplus" class="font-bold text-neon-blue">$0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-semibold">Annual Surplus/Deficit (with bonus):</span>
+                            <span id="gpAnnualSurplusWithBonus" class="font-bold text-neon-green">$0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Credit Card Modal -->
+    <div id="creditCardModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 id="creditCardModalTitle" class="text-xl font-semibold mb-4 text-white">Add Credit Card</h3>
+            
+            <div id="cardValidationErrors" class="mb-4 hidden">
+                <div class="bg-glass-purple p-3 rounded-lg border border-neon-pink">
+                    <p class="text-neon-pink text-sm font-medium"><i class="fas fa-exclamation-triangle mr-2"></i>Please correct the following errors:</p>
+                    <ul id="cardErrorList" class="list-disc ml-6 text-sm text-white mt-1">
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="input-container">
+                    <input type="text" id="cardName" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Card Name</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="creditLimit" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1" step="any">
+                    <label class="floating-label">Credit Limit ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="currentBalance" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any">
+                    <label class="floating-label">Current Balance ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="date" id="openDate" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Date Opened</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="cardDueDate" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1" max="31">
+                    <label class="floating-label">Payment Due Date (Day of Month)</label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeCreditCardModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="saveCreditCard()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Save Card
+                </button>
+            </div>
+            <input type="hidden" id="editCardIndex" value="-1">
+        </div>
+    </div>
+
+    <!-- Add/Edit Bill Modal -->
+    <div id="billModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 id="billModalTitle" class="text-xl font-semibold mb-4 text-white">Add Monthly Bill</h3>
+            
+            <div id="billValidationErrors" class="mb-4 hidden">
+                <div class="bg-glass-purple p-3 rounded-lg border border-neon-pink">
+                    <p class="text-neon-pink text-sm font-medium"><i class="fas fa-exclamation-triangle mr-2"></i>Please correct the following errors:</p>
+                    <ul id="billErrorList" class="list-disc ml-6 text-sm text-white mt-1">
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="input-container">
+                    <input type="text" id="billName" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Bill Name</label>
+                </div>
+                  <div class="input-container">
+                    <input type="number" id="billAmount" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any">
+                    <label class="floating-label">Amount ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <select id="billType" class="cyber-input w-full p-3 rounded-md">
+                        <option value="housing">Housing (Mortgage/Rent)</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="internet">Internet/Cable</option>
+                        <option value="phone">Phone</option>
+                        <option value="insurance">Insurance</option>
+                        <option value="loan">Loan Payment</option>
+                        <option value="credit">Credit Card Payment</option>
+                        <option value="subscription">Subscription</option>
+                        <option value="streaming">Streaming Service</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="childcare">Childcare</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label class="floating-label">Bill Type</label>
+                </div>
+                  <div id="billOptionsContainer" class="space-y-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="varyingAmountDue" class="cyber-checkbox mr-2">
+                        <label for="varyingAmountDue" class="text-white">Varying amount due each month</label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="autoPay" class="cyber-checkbox mr-2">
+                        <label for="autoPay" class="text-white">Set up autopay</label>
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <select id="paymentAccount" class="cyber-input w-full p-3 rounded-md">
+                        <option value="checking">Checking Account</option>
+                        <option value="credit">Credit Card</option>
+                    </select>
+                    <label class="floating-label">Payment Account</label>
+                </div>
+                
+                <div id="creditCardSelectContainer" class="input-container hidden">
+                    <select id="creditCardSelect" class="cyber-input w-full p-3 rounded-md">
+                        <!-- Credit cards will be populated dynamically -->
+                    </select>
+                    <label class="floating-label">Select Credit Card</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="billDueDate" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1" max="31">
+                    <label class="floating-label">Due Date (Day of Month)</label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeBillModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="saveBill()" class="px-4 py-2 cyber-secondary-btn rounded-md">
+                    Save Bill
+                </button>
+            </div>
+            <input type="hidden" id="editBillIndex" value="-1">
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Add Monthly Expense</h3>
+            
+            <div class="space-y-4">
+                <div class="input-container">
+                    <input type="text" id="expenseName" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Expense Name</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="expenseAmount" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Amount ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <select id="expenseCategory" class="cyber-input w-full p-3 rounded-md">
+                        <option value="food">Food & Dining</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="health">Health & Fitness</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label class="floating-label">Category</label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeExpenseModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="saveExpense()" class="px-4 py-2 cyber-blue text-white rounded-md hover:opacity-90">
+                    Save Expense
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Credit Card Image Modal -->
+    <div id="cardImageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Select Credit Card Image</h3>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-3 gap-3" id="cardImageOptions">
+                    <!-- Image options will be added here -->
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="visa">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-visa-3-226460.png" alt="Visa" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Visa</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="mastercard">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-mastercard-3-226466.png" alt="Mastercard" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Mastercard</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="amex">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-american-express-3-226464.png" alt="American Express" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Amex</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="discover">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-discover-3-226468.png" alt="Discover" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Discover</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="capitalone">
+                        <img src="https://logo.clearbit.com/capitalone.com" alt="Capital One" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Capital One</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="chase">
+                        <img src="https://logo.clearbit.com/chase.com" alt="Chase" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Chase</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="citi">
+                        <img src="https://logo.clearbit.com/citi.com" alt="Citi" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Citi</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="apple">
+                        <img src="https://logo.clearbit.com/apple.com" alt="Apple" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Apple</p>
+                    </div>
+                    <div class="card-image-option p-2 border border-gray-600 rounded-lg text-center cursor-pointer hover:border-neon-blue" data-image="generic">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-credit-card-459-226457.png" alt="Default" class="h-10 mx-auto mb-1">
+                        <p class="text-xs text-gray-400">Default</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeCardImageModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+            </div>
+            <input type="hidden" id="editCardImageIndex" value="-1">
+        </div>
+    </div>
+    
+    <!-- Salary Calculator Modal -->
+    <div id="salaryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Calculate Salary</h3>
+            
+            <div class="space-y-4">
+                <!-- Basic Salary Information -->
+                <div class="input-container">
+                    <input type="number" id="modalGrossSalary" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any">
+                    <label class="floating-label">Annual Gross Salary ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <select id="modalPayFrequency" class="cyber-input w-full p-3 rounded-md" placeholder=" " onchange="toggleLastPayDateField()">
+                        <option value="24" selected>Semi-Monthly (24 pay periods)</option>
+                        <option value="26">Bi-Weekly (26 pay periods)</option>
+                    </select>
+                    <label class="floating-label">Pay Frequency</label>
+                </div>
+                
+                <!-- First pay date field - will be shown only for semi-monthly pay -->
+                <div id="firstPayDateContainer" class="input-container">
+                    <select id="firstPayDate" class="cyber-input w-full p-3 rounded-md" onchange="updateFirstPayDate()">
+                        <option value="1">1st of month</option>
+                        <option value="15" selected>15th of month</option>
+                    </select>
+                    <label class="floating-label">First Paycheck Date</label>
+                </div>
+                
+                <!-- Last pay date field - will be shown only for bi-weekly pay -->
+                <div id="lastPayDateContainer" class="input-container hidden">
+                    <input type="date" id="lastPayDate" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Last Paycheck Date</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="modalBonusPercentage" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="10">
+                    <label class="floating-label">Bonus Percentage (%)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="modalBonusTax" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="25">
+                    <label class="floating-label">Bonus Tax Rate (%)</label>
+                </div>
+                
+                <!-- Tax Section -->
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <h4 class="text-white text-sm mb-3">Taxes</h4>
+                    
+                    <div class="input-container">
+                        <select id="modalTaxBracket" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                            <option value="single">Single</option>
+                            <option value="married">Married Filing Jointly</option>
+                            <option value="head">Head of Household</option>
+                        </select>
+                        <label class="floating-label">Tax Filing Status</label>
+                    </div>
+                    
+                    <div class="input-container">
+                        <select id="modalState" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                            <option value="none">No State Income Tax</option>
+                            <option value="al">Alabama (5%)</option>
+                            <option value="ak">Alaska (0%)</option>
+                            <option value="az">Arizona (4.5%)</option>
+                            <option value="ar">Arkansas (5.9%)</option>
+                            <option value="ca">California (9.3%)</option>
+                            <option value="co">Colorado (4.4%)</option>
+                            <option value="ct">Connecticut (5%)</option>
+                            <option value="de">Delaware (6.6%)</option>
+                            <option value="fl">Florida (0%)</option>
+                            <option value="ga">Georgia (5.75%)</option>
+                            <option value="hi">Hawaii (8.25%)</option>
+                            <option value="id">Idaho (6.5%)</option>
+                            <option value="il">Illinois (4.95%)</option>
+                            <option value="in">Indiana (3.15%)</option>
+                            <option value="ia">Iowa (4.4%)</option>
+                            <option value="ks">Kansas (5.7%)</option>
+                            <option value="ky">Kentucky (5%)</option>
+                            <option value="la">Louisiana (4.25%)</option>
+                            <option value="me">Maine (7.15%)</option>
+                            <option value="md">Maryland (5.75%)</option>
+                            <option value="ma">Massachusetts (5%)</option>
+                            <option value="mi">Michigan (4.25%)</option>
+                            <option value="mn">Minnesota (7.05%)</option>
+                            <option value="ms">Mississippi (5%)</option>
+                            <option value="mo">Missouri (5.3%)</option>
+                            <option value="mt">Montana (6.75%)</option>
+                            <option value="ne">Nebraska (6.84%)</option>
+                            <option value="nv">Nevada (0%)</option>
+                            <option value="nh">New Hampshire (5%)</option>
+                            <option value="nj">New Jersey (5.525%)</option>
+                            <option value="nm">New Mexico (5.9%)</option>
+                            <option value="ny">New York (6.33%)</option>
+                            <option value="nc">North Carolina (4.75%)</option>
+                            <option value="nd">North Dakota (2.9%)</option>
+                            <option value="oh">Ohio (3.99%)</option>
+                            <option value="ok">Oklahoma (4.75%)</option>
+                            <option value="or">Oregon (9.9%)</option>
+                            <option value="pa">Pennsylvania (3.07%)</option>
+                            <option value="ri">Rhode Island (5.99%)</option>
+                            <option value="sc">South Carolina (7%)</option>
+                            <option value="sd">South Dakota (0%)</option>
+                            <option value="tn">Tennessee (0%)</option>
+                            <option value="tx">Texas (0%)</option>
+                            <option value="ut">Utah (4.95%)</option>
+                            <option value="vt">Vermont (6.8%)</option>
+                            <option value="va">Virginia (5.75%)</option>
+                            <option value="wa">Washington (0%)</option>
+                            <option value="wv">West Virginia (6%)</option>
+                            <option value="wi">Wisconsin (5.3%)</option>
+                            <option value="wy">Wyoming (0%)</option>
+                            <option value="dc">Washington D.C. (9.75%)</option>
+                        </select>
+                        <label class="floating-label">State</label>
+                    </div>
+                </div>
+                
+                <!-- Deductions Section -->
+                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <h4 class="text-white text-sm mb-3">Deductions</h4>
+                    
+                    <div class="input-container">
+                        <input type="number" id="modalRetirementContribution" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="10">
+                        <label class="floating-label">401k Contribution (%)</label>
+                    </div>
+                    
+                    <div class="input-container">
+                        <input type="number" id="modalEsppContribution" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="10">
+                        <label class="floating-label">ESPP Contribution (%)</label>
+                    </div>
+                </div>
+                
+                <!-- Insurance Section -->                <div class="mt-4 border-t border-gray-700 pt-4">
+                    <h4 class="text-white text-sm mb-3">Insurance (per pay period)</h4>
+                    
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="input-container">
+                            <input type="number" id="modalHealthInsurance" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="0" min="0" step="0.01">
+                            <label class="floating-label">Health ($)</label>
+                        </div>
+                        
+                        <div class="input-container">
+                            <input type="number" id="modalDentalInsurance" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="0" min="0" step="0.01">
+                            <label class="floating-label">Dental ($)</label>
+                        </div>
+                        
+                        <div class="input-container">
+                            <input type="number" id="modalVisionInsurance" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="0" min="0" step="0.01">
+                            <label class="floating-label">Vision ($)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <div class="input-container">
+                            <input type="number" id="modalFsaContribution" class="cyber-input w-full p-3 rounded-md" placeholder=" " value="0" min="0" step="0.01">
+                            <label class="floating-label">FSA ($)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeSalaryModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="calculateSalaryFromModal()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Calculate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Loan Modal -->
+    <div id="loanModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 id="loanModalTitle" class="text-xl font-semibold mb-4 text-white">Add Loan</h3>
+            
+            <div id="loanValidationErrors" class="mb-4 hidden">
+                <div class="bg-glass-purple p-3 rounded-lg border border-neon-pink">
+                    <p class="text-neon-pink text-sm font-medium"><i class="fas fa-exclamation-triangle mr-2"></i>Please correct the following errors:</p>
+                    <ul id="loanErrorList" class="list-disc ml-6 text-sm text-white mt-1">
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="input-container">
+                    <input type="text" id="loanName" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">Loan Name</label>
+                </div>
+                
+                <div class="input-container">
+                    <select id="loanType" class="cyber-input w-full p-3 rounded-md">
+                        <option value="personal">Personal Loan</option>
+                        <option value="auto">Auto Loan</option>
+                        <option value="student">Student Loan</option>
+                        <option value="mortgage">Mortgage</option>
+                        <option value="medical">Medical Loan</option>
+                        <option value="credit">Credit Line</option>
+                        <option value="business">Business Loan</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label class="floating-label">Loan Type</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="loanAmount" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1" step="any">
+                    <label class="floating-label">Original Loan Amount ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="loanBalance" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any">
+                    <label class="floating-label">Current Balance ($)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="interestRate" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="0.01">
+                    <label class="floating-label">Interest Rate (%)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="loanTerm" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1">
+                    <label class="floating-label">Loan Term (months)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="number" id="loanDueDate" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="1" max="31">
+                    <label class="floating-label">Payment Due Date (Day of Month)</label>
+                </div>
+                
+                <div class="input-container">
+                    <input type="date" id="firstPaymentDate" class="cyber-input w-full p-3 rounded-md" placeholder=" ">
+                    <label class="floating-label">First Payment Date</label>
+                </div>
+                  <!-- Additional Principal Payment field for all loan types -->
+                <div class="input-container">
+                    <input type="number" id="additionalPrincipal" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any" value="0">
+                    <label class="floating-label">Additional Principal Payment ($/month)</label>
+                </div>
+
+                <!-- Mortgage-specific fields, hidden by default -->
+                <div id="mortgageFields" class="hidden space-y-4 pt-4 mt-4 border-t border-gray-700">
+                    <h4 class="text-white text-md mb-3">Mortgage Details</h4>
+                    
+                    <div class="input-container">
+                        <input type="number" id="pmi" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any" value="0">
+                        <label class="floating-label">Private Mortgage Insurance ($/month)</label>
+                    </div>
+                    
+                    <div class="input-container">
+                        <input type="number" id="propertyTax" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any" value="0">
+                        <label class="floating-label">Property Tax ($/year)</label>
+                    </div>
+                    
+                    <div class="input-container">
+                        <input type="number" id="propertyInsurance" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any" value="0">
+                        <label class="floating-label">Property Insurance ($/year)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeLoanModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="saveLoan()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Save Loan
+                </button>
+            </div>
+            <input type="hidden" id="editLoanIndex" value="-1">
+        </div>
+    </div>
+    
+    <!-- Complete Month Confirmation Modal -->
+    <div id="completeMonthModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Complete Monthly Bills</h3>
+            
+            <div class="p-4 mb-4 border border-neon-blue rounded-lg">
+                <div id="completeMonthMessage" class="text-white mb-3">
+                    <p class="mb-2"><i class="fas fa-info-circle text-neon-blue mr-2"></i>Not all bills are marked as paid.</p>
+                    <p>Would you like to mark all bills as paid before completing the month?</p>
+                </div>
+                <div id="allPaidMessage" class="text-white mb-3 hidden">
+                    <p class="mb-2"><i class="fas fa-check-circle text-neon-green mr-2"></i>All bills are marked as paid.</p>
+                    <p>Completing the month will reset all bills to unpaid. Are you ready to start a new month?</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeCompleteMonthModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="completeMonth()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    <i class="fas fa-check-circle mr-1"></i> Complete Month
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zero Amount Bill Confirmation Modal -->
+    <div id="zeroBillModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 id="zeroBillModalTitle" class="text-xl font-semibold mb-4 text-white">Pay Bill</h3>
+            
+            <div class="p-4 mb-4 bg-glass-blue rounded-lg">
+                <div class="text-white">
+                    <p class="mb-2"><i class="fas fa-info-circle text-neon-blue mr-2"></i>This bill has a $0.00 amount.</p>
+                    <p>Would you like to enter an amount or confirm zero payment?</p>
+                </div>
+            </div>
+            
+            <div id="zeroBillAmountField" class="hidden space-y-4">
+                <div class="input-container">
+                    <input type="number" id="zeroBillAmount" class="cyber-input w-full p-3 rounded-md" placeholder=" " min="0" step="any">
+                    <label class="floating-label">Payment Amount ($)</label>
+                </div>
+            </div>
+            
+            <!-- Initial buttons container -->
+            <div id="initialButtonsContainer" class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeZeroBillModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="showZeroBillAmountField()" class="px-4 py-2 cyber-secondary-btn rounded-md">
+                    Enter Amount
+                </button>
+                <button onclick="confirmZeroBill()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Confirm Zero
+                </button>
+            </div>
+            
+            <!-- Amount entry buttons container (initially hidden) -->
+            <div id="amountEntryButtonsContainer" class="flex justify-end space-x-3 mt-6 hidden">
+                <button onclick="closeZeroBillModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="enterZeroBillAmount()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Save Payment
+                </button>
+            </div>
+            
+            <input type="hidden" id="zeroBillIndex" value="-1">
+        </div>
+    </div>
+      <!-- Varying Amount Confirmation Modal -->
+    <div id="varyingAmountModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Varying Amount Confirmation</h3>
+            
+            <div class="p-4 mb-4 bg-glass-purple rounded-lg border border-neon-purple">
+                <p class="text-white mb-2">
+                    <i class="fas fa-info-circle text-neon-blue mr-2"></i>
+                    You've selected "Varying amount due each month". This means:
+                </p>
+                <ul class="list-disc ml-6 text-sm text-white">
+                    <li class="mb-1">The amount you entered will be used as an <span class="text-neon-blue">estimate</span></li>
+                    <li class="mb-1">You'll be prompted to enter the actual amount when marking the bill as paid</li>
+                    <li>The monthly bill total will use your estimate for planning purposes</li>
+                </ul>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <button onclick="cancelVaryingAmount()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="confirmVaryingAmount()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reset Confirmation Modal -->
+    <div id="resetConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Reset All Data</h3>
+            
+            <div class="p-4 mb-4 bg-glass-pink rounded-lg">
+                <div class="text-white">
+                    <p class="mb-2"><i class="fas fa-exclamation-triangle text-neon-pink mr-2"></i>Warning: This action cannot be undone!</p>
+                    <p>Are you sure you want to delete all your data?</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeResetConfirmModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="confirmReset()" class="px-4 py-2 cyber-danger-btn rounded-md">
+                    <i class="fas fa-trash mr-1"></i> Reset All Data
+                </button>
+            </div>
+        </div>
+    </div>
+      <!-- Import Options Modal -->
+    <div id="importOptionsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Import Options</h3>
+            
+            <div class="p-4 mb-4 bg-glass-purple rounded-lg">
+                <div class="text-white">
+                    <p class="mb-2"><i class="fas fa-info-circle text-neon-blue mr-2"></i>Choose an import option:</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col space-y-3 mt-6">
+                <button onclick="selectFile()" class="px-4 py-3 cyber-primary-btn rounded-md w-full text-white">
+                    <i class="fas fa-file mr-2"></i> Select File
+                </button>
+                <button onclick="importSampleData()" class="px-4 py-3 bg-glass-blue hover:bg-opacity-90 rounded-md w-full text-white">
+                    <i class="fas fa-database mr-2"></i> Import Sample Data
+                </button>
+                <button onclick="closeImportOptionsModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800 mt-3">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Confirmation Modal -->    <div id="importConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4 text-white">Import Data</h3>
+            
+            <div class="p-4 mb-4 bg-glass-purple rounded-lg">
+                <div class="text-white">
+                    <p class="mb-2"><i class="fas fa-info-circle text-neon-blue mr-2"></i>This will replace all your current data.</p>
+                    <p>Do you want to continue?</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeImportConfirmModal()" class="px-4 py-2 border border-gray-600 text-white rounded-md hover:bg-gray-800">
+                    Cancel
+                </button>
+                <button onclick="confirmImport()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                    <i class="fas fa-file-import mr-1"></i> Import Data
+                </button>
+            </div>
+            
+            <input type="hidden" id="importData" value="">
+        </div>
+    </div>
+
+<!-- Help Modal -->    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="modal-cyber rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 sticky top-0 bg-cyber-black py-2">
+                <h3 class="text-2xl font-semibold text-white"><i class="fas fa-book text-neon-blue mr-2"></i>CorpoCache User Guide</h3>
+                <button onclick="closeHelpModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="cyber-help-content space-y-6 text-white">
+                <p class="text-lg">Welcome to CorpoCache! This cyberpunk-styled financial tracking application helps you manage your monthly budget, credit cards, loans, and calculate salary information.</p>
+                
+                <!-- Table of Contents -->
+                <div class="p-4 bg-glass-blue rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Table of Contents</h4>
+                    <ol class="list-decimal ml-6 space-y-1">
+                        <li><a href="#getting-started" class="text-neon-green hover:text-white">Getting Started</a></li>
+                        <li><a href="#credit-cards" class="text-neon-green hover:text-white">Credit Cards</a></li>
+                        <li><a href="#loans" class="text-neon-green hover:text-white">Loans</a></li>
+                        <li><a href="#monthly-bills" class="text-neon-green hover:text-white">Monthly Bills</a></li>
+                        <li><a href="#salary-calculator" class="text-neon-green hover:text-white">Salary Calculator</a></li>
+                        <li><a href="#net-profit-calculator" class="text-neon-green hover:text-white">Net Profit Calculator</a></li>
+                        <li><a href="#data-management" class="text-neon-green hover:text-white">Data Management</a></li>
+                    </ol>
+                </div>
+                
+                <!-- Getting Started Section -->
+                <div id="getting-started" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Getting Started</h4>
+                    <p class="mb-2">CorpoCache is a browser-based financial tracking tool that stores your data locally. When you first open the application, you'll see several sections to help you manage different aspects of your finances.</p>
+                    
+                    <div class="bg-glass-blue bg-opacity-30 border border-neon-blue p-3 rounded mt-3">
+                        <p class="font-bold text-neon-blue"><i class="fas fa-lightbulb mr-1"></i> Pro Tip</p>
+                        <p>For the best experience, add your credit cards and loans first, as this will automatically populate your monthly bills section with the required payments!</p>
+                    </div>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Data Management</h5>
+                    <p class="mb-1">At the top of the page, you'll find several buttons:</p>
+                    <ul class="list-disc ml-6">
+                        <li><strong>Save:</strong> Manually saves your data to local storage</li>
+                        <li><strong>Export:</strong> Exports your data as a JSON file for backup</li>
+                        <li><strong>Import:</strong> Imports previously exported data or sample data</li>
+                        <li><strong>Reset:</strong> Clears all stored data</li>
+                        <li><strong>Help:</strong> Opens this documentation</li>
+                    </ul>
+                </div>
+                
+                <!-- Credit Cards Section -->
+                <div id="credit-cards" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Credit Cards</h4>
+                    <p class="mb-2">The Credit Cards section helps you track your credit accounts and utilization. <span class="text-neon-green font-bold">Start here</span> to automatically populate your monthly bills with credit card payments.</p>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Adding a Credit Card</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Add Card</strong> button</li>
+                        <li>Fill in the details:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li><strong>Card Name:</strong> Name of the credit card</li>
+                                <li><strong>Credit Limit:</strong> Maximum credit available</li>
+                                <li><strong>Current Balance:</strong> Amount currently owed</li>
+                                <li><strong>Date Opened:</strong> When you opened the account</li>
+                                <li><strong>Payment Due Date:</strong> Day of the month when payment is due</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save Card</strong></li>
+                    </ol>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Credit Card Features</h5>
+                    <ul class="list-disc ml-6">
+                        <li>The app calculates your total credit limit, balance, and utilization</li>
+                        <li>Shows how much to pay to reach 30% and 10% utilization targets</li>
+                        <li>Tracks your oldest credit line for credit age calculations</li>
+                        <li>Provides a color-coded guide for credit factors</li>
+                    </ul>
+                </div>
+                
+                <!-- Loans Section -->
+                <div id="loans" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Loans</h4>
+                    <p class="mb-2">The Loans section helps you track various types of loans. <span class="text-neon-green font-bold">Add your loans early</span> to automatically populate your monthly bills with loan payments.</p>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Adding a Loan</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Add Loan</strong> button</li>
+                        <li>Fill in the details:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li><strong>Loan Name:</strong> Name of the loan</li>
+                                <li><strong>Loan Type:</strong> Category (personal, auto, mortgage, etc.)</li>
+                                <li><strong>Original Loan Amount:</strong> Initial borrowed amount</li>
+                                <li><strong>Current Balance:</strong> Amount currently owed</li>
+                                <li><strong>Interest Rate:</strong> Annual percentage rate</li>
+                                <li><strong>Loan Term:</strong> Length of the loan in months</li>
+                                <li><strong>Payment Due Date:</strong> Day of the month when payment is due</li>
+                                <li><strong>Additional Principal Payment:</strong> Extra payment toward principal</li>
+                                <li>For mortgages: PMI, property tax, and insurance information</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save Loan</strong></li>
+                    </ol>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Loan Features</h5>
+                    <ul class="list-disc ml-6">
+                        <li>Progress bar shows overall payoff progress across all loans</li>
+                        <li>Calculates total monthly payment required</li>
+                    </ul>
+                </div>
+                
+                <!-- Monthly Bills Section -->                <div id="monthly-bills" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Monthly Bills</h4>
+                    <p class="mb-2">The Monthly Bills section helps you track recurring expenses. <span class="text-neon-green font-bold">Credit card and loan payments will automatically appear here</span> after you add them in their respective sections.</p>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Adding a Bill</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Add Bill</strong> button at the top right of this section</li>
+                        <li>Fill in the details:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li><strong>Bill Name:</strong> Name of the bill</li>
+                                <li><strong>Amount:</strong> Payment amount</li>
+                                <li><strong>Bill Type:</strong> Category of the bill</li>
+                                <li><strong>Payment Account:</strong> Select whether the bill is paid from your Checking Account or Credit Card</li>
+                                <li><strong>Credit Card:</strong> If "Credit Card" is selected as payment account, choose which specific card the bill is charged to</li>
+                                <li><strong>Varying amount due:</strong> Check this if the bill amount changes monthly</li>
+                                <li><strong>Set up autopay:</strong> Indicate if the bill is on automatic payment</li>
+                                <li><strong>Due Date:</strong> Day of the month when payment is due</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save Bill</strong></li>
+                    </ol>                    <h5 class="text-lg text-neon-green mt-4 mb-1">Managing Bills</h5>
+                    <ul class="list-disc ml-6">
+                        <li><strong>Mark as Paid:</strong> Click anywhere on a bill card to mark it as paid</li>
+                        <li><strong>Edit:</strong> Click the edit icon (pencil) on a bill card</li>
+                        <li><strong>Delete:</strong> Click the delete icon (trash) on a bill card</li>
+                        <li><strong>Payment Account:</strong> Each bill card displays whether it's paid from Checking Account or a specific Credit Card</li>
+                    </ul>
+                      <h5 class="text-lg text-neon-green mt-4 mb-1">Payment Account System</h5>
+                    <ul class="list-disc ml-6">
+                        <li>Bills can be assigned to either your <strong>Checking Account</strong> or a <strong>Credit Card</strong></li>
+                        <li>All bills are included in the bill count, but bills charged to credit cards have their <strong>amounts excluded</strong> from Monthly Bills totals and net profit calculations</li>
+                        <li>By default, credit cards and loans are set to use <strong>Checking Account</strong> as their payment source</li>
+                        <li>To accurately track spending, assign each bill to the correct payment account</li>
+                    </ul>
+                    
+                    <div class="bg-glass-blue bg-opacity-30 border border-neon-blue p-3 rounded mt-3">
+                        <p class="font-bold text-neon-blue"><i class="fas fa-info-circle mr-1"></i> Note</p>
+                        <p>Bills charged to credit cards are <span class="text-neon-green font-bold">included</span> in your total bill count but their amounts are <span class="text-white font-bold">not added</span> to the monthly expenses total to avoid double-counting.</p>
+                    </div><h5 class="text-lg text-neon-green mt-4 mb-1">Handling Varying Amount Bills</h5>
+                    <p class="mb-2">When a bill is marked as "Varying Amount Due":</p>
+                    <ol class="list-decimal ml-6">
+                        <li>Click anywhere on the bill card to mark it as paid</li>
+                        <li>A dialog will appear asking for the actual amount</li>
+                        <li>Enter the actual amount for this month's payment</li>
+                        <li>Click "Save Payment" to record the payment</li>
+                        <li>The bill will be marked as paid with the updated amount</li>
+                    </ol>
+                    <div class="bg-glass-blue bg-opacity-30 border border-neon-blue p-3 rounded mt-3">
+                        <p class="font-bold text-neon-blue"><i class="fas fa-info-circle mr-1"></i> Note</p>
+                        <p>This feature is especially useful for utility bills, credit card minimum payments, or any expense that changes from month to month.</p>
+                    </div>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Complete Month</h5>
+                    <p>When you've paid all your bills for the month:</p>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Complete Month</strong> button</li>
+                        <li>Confirm to reset all bills to "unpaid" for the next month</li>
+                    </ol>
+                </div>
+                
+                <!-- Salary Calculator Section -->
+                <div id="salary-calculator" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Salary Calculator</h4>
+                    <p class="mb-2">The Salary Calculator helps you determine take-home pay after taxes and deductions.</p>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Using the Salary Calculator</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Calculate Salary</strong> button</li>
+                        <li>Fill in the details:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li><strong>Annual Gross Salary:</strong> Your pre-tax yearly income</li>
+                                <li><strong>Pay Frequency:</strong> Semi-monthly (24 pay periods) or bi-weekly (26 pay periods)</li>
+                                <li><strong>First Paycheck Date</strong> or <strong>Last Paycheck Date:</strong> When you get paid</li>
+                                <li><strong>Bonus Percentage:</strong> Expected annual bonus percentage</li>
+                                <li><strong>Bonus Tax Rate:</strong> Withholding rate for bonuses</li>
+                                <li><strong>Tax Filing Status:</strong> Single, married, or head of household</li>
+                                <li><strong>State:</strong> Your state of residence for tax calculations</li>
+                                <li><strong>401k Contribution:</strong> Percentage of salary for retirement</li>
+                                <li><strong>ESPP Contribution:</strong> Percentage for employee stock purchase plan</li>
+                                <li><strong>Insurance Costs:</strong> Health, dental, vision, and FSA contributions</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Calculate</strong></li>
+                    </ol>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Salary Results</h5>
+                    <ul class="list-disc ml-6">
+                        <li>Shows annual salary and potential bonus</li>
+                        <li>Breaks down gross pay, taxes, and deductions</li>
+                        <li>Calculates net pay per paycheck</li>
+                        <li>Displays federal tax brackets for reference</li>
+                    </ul>
+                </div>
+                
+                <!-- Net Profit Calculator Section -->                <div id="net-profit-calculator" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Net Profit Calculator</h4>
+                    <p class="mb-2">The Net Profit Calculator shows your monthly and annual cash flow based on your salary and bills.</p>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Using the Net Profit Calculator</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>First, complete the Salary Calculator</li>
+                        <li>Click the <strong>Update Profit</strong> button</li>                        <li>Review your monthly cash flow:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li>Monthly net income versus bills (amounts of bills charged to credit cards are excluded)</li>
+                                <li>Surplus/deficit for each paycheck</li>
+                                <li>Annual projection including potential bonus</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <div class="bg-glass-blue bg-opacity-30 border border-neon-blue p-3 rounded mt-3">
+                        <p class="font-bold text-neon-blue"><i class="fas fa-info-circle mr-1"></i> Note</p>
+                        <p>While all bills appear in the bills list, only the amounts of bills assigned to your Checking Account are counted in expense calculations. Credit card bill amounts are excluded to prevent double-counting.</p>
+                    </div>
+                </div>
+                
+                <!-- Data Management Section -->
+                <div id="data-management" class="p-4 bg-glass-purple rounded-lg">
+                    <h4 class="text-xl text-neon-blue mb-2">Data Management</h4>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Saving Your Data</h5>
+                    <ul class="list-disc ml-6">
+                        <li>Data is automatically saved to your browser's local storage</li>
+                        <li>Click the <strong>Save</strong> button to manually save at any time</li>
+                    </ul>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Exporting Data</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Export</strong> button</li>
+                        <li>Save the JSON file to your computer</li>
+                    </ol>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Importing Data</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Import</strong> button</li>
+                        <li>Choose between:
+                            <ul class="list-disc ml-6 mt-1">
+                                <li><strong>Select File:</strong> Upload a previously exported file</li>
+                                <li><strong>Import Sample Data:</strong> Load pre-configured example data</li>
+                            </ul>
+                        </li>
+                        <li>Confirm the import action</li>
+                    </ol>
+                    
+                    <h5 class="text-lg text-neon-green mt-4 mb-1">Resetting Data</h5>
+                    <ol class="list-decimal ml-6">
+                        <li>Click the <strong>Reset</strong> button</li>
+                        <li>Confirm that you want to delete all data</li>
+                    </ol>
+                </div>
+                
+                <!-- Tips Section -->
+                <div class="p-4 bg-glass-blue rounded-lg">                    <h4 class="text-xl text-neon-blue mb-2">Tips for Optimal Use</h4>
+                    <ol class="list-decimal ml-6">
+                        <li><strong>Start with Credit Cards and Loans:</strong> Add these first to auto-populate your monthly bills</li>
+                        <li><strong>Regular Updates:</strong> Keep your balances and payments up to date</li>
+                        <li><strong>Select Correct Payment Accounts:</strong> Accurately assign bills to either Checking Account or Credit Cards</li>
+                        <li><strong>Export Regularly:</strong> Back up your data periodically</li>
+                        <li><strong>Complete Month:</strong> Use this feature at the end of each month</li>
+                        <li><strong>View Tax Brackets:</strong> Click the dropdown in the Salary Calculator to see current tax brackets</li>
+                        <li><strong>Credit Utilization:</strong> Use the credit card summary to maintain healthy utilization levels</li>
+                    </ol>
+                    
+                    <p class="mt-4">CorpoCache is designed to provide a comprehensive overview of your financial situation with a cyberpunk aesthetic. By regularly updating your information, you'll gain valuable insights into your spending, debt, and savings patterns.</p>
+                </div>
+                
+                <div class="flex justify-end mt-2">
+                    <button onclick="closeHelpModal()" class="px-4 py-2 cyber-primary-btn rounded-md">
+                        <i class="fas fa-check mr-1"></i> Close Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Back to Top Button -->
+<div class="back-to-top" id="backToTop" title="Back to Top">
+    <i class="fas fa-arrow-up"></i>
+</div>
+
+<!-- External JavaScript -->
+<script src="js/script.js?v=2.5.5"></script>
+<script src="js/cyberpunk-bg.js"></script>
+<script>
+    // Back to Top button functionality
+    document.getElementById('backToTop').addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Show/hide Back to Top button based on scroll position
+    window.addEventListener('scroll', function() {
+        const backToTopBtn = document.getElementById('backToTop');
+        if (window.scrollY > 300) {
+            backToTopBtn.style.display = 'flex';
+        } else {
+            backToTopBtn.style.display = 'none';
+        }
+    });
+    
+    // Initially hide the back to top button
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('backToTop').style.display = 'none';
+    });    // Collapsible sections are now handled by initCollapsibleSections() in script.js
+</script>
+<script>
+        // Help Modal Functions
+        window.openHelpModal = function() {
+            document.getElementById('helpModal').classList.remove('hidden');
+        }
+        
+        window.closeHelpModal = function() {
+            document.getElementById('helpModal').classList.add('hidden');
+        }
+        
+        // Close help modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (!document.getElementById('helpModal').classList.contains('hidden')) {
+                    closeHelpModal();
+                }
+            }
+        });
+        
+        // Close help modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const helpModal = document.getElementById('helpModal');
+            if (!helpModal.classList.contains('hidden') && event.target === helpModal) {
+                closeHelpModal();
+            }        });
+    </script>
+<script src="js/amortization.js"></script>
+</body>
+</html>
