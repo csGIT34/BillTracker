@@ -1,8 +1,12 @@
 # Infrastructure GitOps Workflow
 # Automatically validates and provisions infrastructure defined in infrastructure.yaml
 #
+# Required secrets:
+#   INFRA_SERVICE_BUS_SAS_KEY - Service Bus SAS key for submitting requests
+#   INFRA_DISPATCH_TOKEN - GitHub PAT with 'repo' scope to trigger queue consumer
+#
 # On PR: Validates configuration and posts a preview comment showing additions/deletions
-# On merge to main: Submits infrastructure request for provisioning
+# On merge to main: Submits infrastructure request and triggers immediate processing
 
 name: Infrastructure GitOps
 
@@ -388,3 +392,14 @@ jobs:
               print(e.read().decode())
               exit(1)
           EOF
+
+      - name: Trigger Queue Consumer
+        env:
+          GH_TOKEN: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/csGIT34/infrastructure-automation/dispatches \
+            -d '{"event_type":"infrastructure-request","client_payload":{"source":"${{ github.repository }}","sha":"${{ github.sha }}"}}'
+          echo "Triggered infrastructure queue consumer"
