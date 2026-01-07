@@ -30,6 +30,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get base branch config
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git show origin/${{ github.base_ref }}:infrastructure.yaml > base_infrastructure.yaml 2>/dev/null || echo "" > base_infrastructure.yaml
+          else
+            git show HEAD~1:infrastructure.yaml > base_infrastructure.yaml 2>/dev/null || echo "" > base_infrastructure.yaml
+          fi
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -112,63 +123,113 @@ jobs:
         run: |
           python << 'PLANEOF'
           import yaml
-          import json
           import os
 
+          def get_azure_name(rtype, rname, project, env):
+              if rtype == 'storage_account':
+                  return f"{project}{rname}{env}".replace('-', '').replace('_', '')[:24]
+              elif rtype == 'keyvault':
+                  return f"{project}-{rname}-{env}"[:24]
+              elif rtype == 'postgresql':
+                  return f"{project}-{rname}-{env}"
+              elif rtype == 'static_web_app':
+                  return f"swa-{project}-{rname}-{env}"
+              else:
+                  return f"{rtype}-{project}-{rname}-{env}"
+
+          # Load current config
           with open("infrastructure.yaml", 'r') as f:
               config = yaml.safe_load(f)
 
+          # Load base config (previous state)
+          base_resources = {}
+          try:
+              with open("base_infrastructure.yaml", 'r') as f:
+                  content = f.read().strip()
+                  if content:
+                      base_config = yaml.safe_load(content)
+                      if base_config and 'resources' in base_config:
+                          for r in base_config['resources']:
+                              key = f"{r['type']}:{r['name']}"
+                              base_resources[key] = r
+          except:
+              pass
+
           metadata = config['metadata']
-          resources = config['resources']
+          resources = config.get('resources', [])
 
           project = metadata.get('project_name', 'unknown')
           env = metadata.get('environment', 'dev')
 
+          # Categorize resources
+          current_keys = set()
+          for r in resources:
+              key = f"{r['type']}:{r['name']}"
+              current_keys.add(key)
+
+          base_keys = set(base_resources.keys())
+
+          added = current_keys - base_keys
+          removed = base_keys - current_keys
+          unchanged = current_keys & base_keys
+
           # Generate markdown preview
           preview = f"""## Infrastructure Plan Preview
 
-          ### Project Information
-          | Property | Value |
-          |----------|-------|
-          | Project Name | `{metadata.get('project_name')}` |
-          | Environment | `{metadata.get('environment')}` |
-          | Business Unit | `{metadata.get('business_unit')}` |
-          | Cost Center | `{metadata.get('cost_center')}` |
-          | Owner | `{metadata.get('owner_email')}` |
-          | Location | `{metadata.get('location', 'centralus')}` |
+### Project Information
+| Property | Value |
+|----------|-------|
+| Project Name | `{metadata.get('project_name')}` |
+| Environment | `{metadata.get('environment')}` |
+| Business Unit | `{metadata.get('business_unit')}` |
+| Cost Center | `{metadata.get('cost_center')}` |
+| Owner | `{metadata.get('owner_email')}` |
+| Location | `{metadata.get('location', 'centralus')}` |
 
-          ### Resources to be Provisioned
+### Changes Summary
+| Added | Removed | Unchanged |
+|-------|---------|-----------|
+| {len(added)} | {len(removed)} | {len(unchanged)} |
 
-          | # | Type | Name | Expected Azure Resource |
-          |---|------|------|------------------------|
-          """
+### Resource Changes
 
-          for i, r in enumerate(resources, 1):
-              rtype = r['type']
-              rname = r['name']
+| Status | Type | Name | Azure Resource |
+|--------|------|------|----------------|
+"""
 
-              if rtype == 'storage_account':
-                  azure_name = f"{project}{rname}{env}".replace('-', '').replace('_', '')[:24]
-              elif rtype == 'keyvault':
-                  azure_name = f"kv-{project}-{rname}-{env}"[:24]
-              elif rtype == 'postgresql':
-                  azure_name = f"psql-{project}-{rname}-{env}"
-              elif rtype == 'static_web_app':
-                  azure_name = f"swa-{project}-{rname}-{env}"
-              else:
-                  azure_name = f"{rtype}-{project}-{rname}-{env}"
+          # Show added resources
+          for r in resources:
+              key = f"{r['type']}:{r['name']}"
+              azure_name = get_azure_name(r['type'], r['name'], project, env)
+              if key in added:
+                  preview += f"| :heavy_plus_sign: **Add** | `{r['type']}` | `{r['name']}` | `{azure_name}` |\n"
 
-              preview += f"| {i} | `{rtype}` | `{rname}` | `{azure_name}` |\n"
+          # Show removed resources
+          for key in removed:
+              r = base_resources[key]
+              azure_name = get_azure_name(r['type'], r['name'], project, env)
+              preview += f"| :heavy_minus_sign: **Remove** | `{r['type']}` | `{r['name']}` | `{azure_name}` |\n"
+
+          # Show unchanged resources
+          for r in resources:
+              key = f"{r['type']}:{r['name']}"
+              azure_name = get_azure_name(r['type'], r['name'], project, env)
+              if key in unchanged:
+                  preview += f"| :white_check_mark: No change | `{r['type']}` | `{r['name']}` | `{azure_name}` |\n"
 
           preview += f"""
-          ### Resource Group
-          `rg-{project}-{env}`
+### Resource Group
+`rg-{project}-{env}`
 
-          ---
-          **On merge to main**, these resources will be automatically provisioned.
+---
+"""
+          if added or removed:
+              preview += "**:warning: This PR will modify infrastructure.** Review changes carefully before merging.\n\n"
+          else:
+              preview += "**No infrastructure changes detected.**\n\n"
 
-          Track provisioning status at: https://wonderful-field-088efae10.1.azurestaticapps.net
-          """
+          preview += "**On merge to main**, these changes will be automatically applied.\n\n"
+          preview += "Track provisioning status at: https://wonderful-field-088efae10.1.azurestaticapps.net\n"
 
           with open('plan_preview.md', 'w') as f:
               f.write(preview)
