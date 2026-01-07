@@ -1,5 +1,6 @@
 # BillTracker Infrastructure Configuration
 # This file defines the Azure resources for the BillTracker application.
+# Re-provisioning with stable state keys
 #
 # GitOps Workflow:
 # 1. Edit this file and create a PR to preview infrastructure changes
