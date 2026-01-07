@@ -40,4 +40,11 @@ resources:
     config:
       sku: standard
       rbac_enabled: true
+
+  # Static Web App for hosting the BillTracker frontend
+  - type: static_web_app
+    name: frontend
+    config:
+      sku_tier: Free
+      sku_size: Free
 # GitOps managed infrastructure
