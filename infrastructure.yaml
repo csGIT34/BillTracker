@@ -21,26 +21,6 @@ metadata:
     ManagedBy: GitOps
 
 resources:
-  # Storage account for bill documents and attachments
-  - type: storage_account
-    name: docs
-    config:
-      tier: Standard
-      replication: LRS
-      versioning: true
-      containers:
-        - name: bills
-          access_type: private
-        - name: receipts
-          access_type: private
-
-  # Key Vault for storing secrets (API keys, connection strings)
-  - type: keyvault
-    name: secrets
-    config:
-      sku: standard
-      rbac_enabled: true
-
   # Static Web App for hosting the BillTracker frontend
   - type: static_web_app
     name: frontend
