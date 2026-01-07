@@ -3,7 +3,8 @@
 #
 # Required secrets:
 #   INFRA_SERVICE_BUS_SAS_KEY - Service Bus SAS key for submitting requests
-#   INFRA_DISPATCH_TOKEN - GitHub PAT with 'repo' scope to trigger queue consumer
+#   INFRA_APP_ID - GitHub App ID for triggering queue consumer
+#   INFRA_APP_PRIVATE_KEY - GitHub App private key (PEM format)
 #
 # On PR: Validates configuration and posts a preview comment showing additions/deletions
 # On merge to main: Submits infrastructure request and triggers immediate processing
@@ -393,9 +394,18 @@ jobs:
               exit(1)
           EOF
 
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.INFRA_APP_ID }}
+          private-key: ${{ secrets.INFRA_APP_PRIVATE_KEY }}
+          owner: csGIT34
+          repositories: infrastructure-automation
+
       - name: Trigger Queue Consumer
         env:
-          GH_TOKEN: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           curl -X POST \
             -H "Authorization: token $GH_TOKEN" \
