@@ -28,6 +28,12 @@ resources:
     config:
       sku_tier: Free
       sku_size: Free
+
+  - type: keyvault
+    name: secrets
+    config:
+      sku: standard
+      rbac_enabled: true
 # GitOps managed infrastructure
 
 # Trigger new provisioning
