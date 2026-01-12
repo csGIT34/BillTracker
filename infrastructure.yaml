@@ -23,17 +23,8 @@ metadata:
 
 resources:
   # Static Web App for hosting the BillTracker frontend
-  - type: static_web_app
-    name: frontend
-    config:
-      sku_tier: Free
-      sku_size: Free
-  - type: keyvault
-    name: secrets
-    config:
-      sku: standard
-      rbac_enabled: true
-      
+
+
 # GitOps managed infrastructure
 
 # Trigger new provisioning
