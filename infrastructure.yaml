@@ -33,6 +33,7 @@ resources:
     config:
       sku: standard
       rbac_enabled: true
+      
 # GitOps managed infrastructure
 
-# Trigger new provisioning
+# Trigger new provisioning - fresh start
