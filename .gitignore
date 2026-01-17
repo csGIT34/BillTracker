@@ -1,0 +1,19 @@
+# Claude temp files
+*-cwd
+tmpclaude-*
+
+# Node
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Local env
+.env
+.env.local
