@@ -15,7 +15,7 @@ resources:
       sku_tier: Free
       sku_size: Free
 
-  - type: key_vault
+  - type: keyvault
     name: secrets
     config:
       sku_name: standard
